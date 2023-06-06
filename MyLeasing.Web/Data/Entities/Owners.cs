@@ -3,7 +3,7 @@ using System.Xml.Linq;
 
 namespace MyLeasing.Web.Data.Entities
 {
-    public class Owners
+    public class Owners : IEntity
     {
         public int Id { get; set; }
 
