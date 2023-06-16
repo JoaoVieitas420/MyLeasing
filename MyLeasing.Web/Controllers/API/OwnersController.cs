@@ -8,19 +8,20 @@ namespace MyLeasing.Web.Controllers.API
     [ApiController]
     public class OwnersController : Controller
     {
-        private readonly IOwnersRepository _productRepository;
+        private readonly IOwnersRepository _ownerRepository;
 
         public OwnersController(IOwnersRepository ownerRepository)
         {
 
-            _productRepository = ownerRepository;
+            _ownerRepository = ownerRepository;
 
         }
+
 
         [HttpGet]
         public IActionResult GetOwners()
         {
-            return Ok(_productRepository.GetAll());
+            return Ok(_ownerRepository.GetAllWithUsers());
         }
     }
 }

@@ -20,6 +20,9 @@ namespace MyLeasing.Web.Data.Entities
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
 
+        [Display(Name = "Image")]
+        public string ImageUrl { get; set; }
+
         [Display(Name = "Fixed Phone")]
         public string? FixedPhone { get; set; }
 
@@ -33,5 +36,19 @@ namespace MyLeasing.Web.Data.Entities
         public User User { get; set; }
 
 
+
+        public string ImageFullPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(ImageUrl))
+                {
+                    return null;
+                }
+
+                return $"https://localhost:44312{ImageUrl.Substring(1)}";
+            }
+        }
+       
     }
 }
