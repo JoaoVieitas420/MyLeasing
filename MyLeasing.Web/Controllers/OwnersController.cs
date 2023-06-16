@@ -14,11 +14,19 @@ namespace MyLeasing.Web.Controllers
     {
         private readonly IOwnersRepository _ownersRepository;
         private readonly IUserHelper _userHelper;
+        private readonly IConverterHelper _converterHelper;
+        private readonly IImageHelper _imageHelper;
 
-        public OwnersController(IOwnersRepository ownersRepository, IUserHelper userHelper)
+        public OwnersController(
+            IOwnersRepository ownersRepository,
+            IUserHelper userHelper,
+            IImageHelper imageHelper,
+            IConverterHelper converterHelper)
         {
             _ownersRepository = ownersRepository;
             _userHelper = userHelper;
+            _converterHelper = converterHelper;
+            _imageHelper = imageHelper;
         }
 
         // GET: Owners
@@ -63,23 +71,12 @@ namespace MyLeasing.Web.Controllers
 
                 if (model.ImageFile != null && model.ImageFile.Length > 0)
                 {
-                    var guid = Guid.NewGuid().ToString("N");
-                    var file = $"{guid}.jpg";
 
-                    path = Path.Combine(
-                        Directory.GetCurrentDirectory(),
-                        "wwwroot\\images\\owners",
-                        file);
 
-                    using (var stream = new FileStream(path, FileMode.Create))
-                    {
-                        await model.ImageFile.CopyToAsync(stream);
-                    }
-
-                    path = $"~/images/owners/{file}";
+                    path = await _imageHelper.UploadImageAsync(model.ImageFile, "owners"); 
                 }
 
-                var owners = this.ToOwners(model, path);
+                var owners = _converterHelper.ToOwners(model, path, true);
 
                 //TODO: Modificar para o user que estiver logado
                 owners.User = await _userHelper.GetUserByEmailAsync("joao.vieitas2@gmail.com");
@@ -89,22 +86,6 @@ namespace MyLeasing.Web.Controllers
             return View(model);
         }
 
-        private Owners ToOwners(OwnerViewModel model, string path)
-        {
-            return new Owners
-            {
-                Id = model.Id,
-                ImageUrl = path,
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                CellPhone = model.CellPhone,
-                Address = model.Address,
-                Document = model.Document,
-                FixedPhone = model.FixedPhone,
-                User = model.User
-
-            };
-        }
 
         // GET: Owners/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -120,25 +101,11 @@ namespace MyLeasing.Web.Controllers
                 return NotFound();
             }
 
-            var model = this.ToOwnersViewModel(owners);
+            var model = _converterHelper.ToOwnerViewModel(owners);
             return View(model);
         }
 
-        private OwnerViewModel ToOwnersViewModel(Owners owners)
-        {
-            return new OwnerViewModel
-            {
-                Id = owners.Id,
-                FirstName = owners.FirstName,
-                LastName = owners.LastName,
-                CellPhone = owners.CellPhone,
-                ImageUrl = owners.ImageUrl,
-                Address = owners.Address,
-                Document = owners.Document,
-                FixedPhone = owners.FixedPhone,
-                User = owners.User
-            };
-        }
+
 
         // POST: Owners/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -157,24 +124,13 @@ namespace MyLeasing.Web.Controllers
 
                     if (model.ImageFile != null && model.ImageFile.Length > 0)
                     {
-                        var guid = Guid.NewGuid().ToString("N");
-                        var file = $"{guid}.jpg";
 
 
-                        path = Path.Combine(
-                        Directory.GetCurrentDirectory(),
-                        "wwwroot\\images\\owners",
-                        file);
-
-                        using (var stream = new FileStream(path, FileMode.Create))
-                        {
-                            await model.ImageFile.CopyToAsync(stream);
-                        }
-
-                        path = $"~/images/owners/{file}";
+                        path = await _imageHelper.UploadImageAsync(model.ImageFile, "owners");
                     }
 
-                    var owners = this.ToOwners(model, path);
+
+                    var owners = _converterHelper.ToOwners(model, path, false);
 
                     //TODO: Modificar para o user que tiver logado
                     owners.User = await _userHelper.GetUserByEmailAsync("joao.vieitas2@gmail.com");
