@@ -59,11 +59,37 @@ namespace MyLeasing.Web.Data
                 AddOwner("Inês", "Costa", "012345678", "098765432", "Rua das Tulipas", user);
                 await _context.SaveChangesAsync();
             }
+
+            if (!_context.Lessees.Any())
+            {
+                AddLessee("Alexandre", "Silva", "212346513", "962346513", "Rua Albertina", user);
+                AddLessee("Beatriz", "Malhoa", "212346513", "962346513", "Rua Albertina", user);
+                AddLessee("Bruno", "Baixo", "216785565", "962346513", "Rua Lisboa", user);
+                AddLessee("Zé", "Esquerda", "213453456", "962346513", "Rua João", user);
+                AddLessee("Jorge", "Jesus", "212346513", "962347543", "Rua Espanha", user);
+                AddLessee("Marta", "Nazaré", "212346513", "962346513", "Rua Albertina", user);
+                await _context.SaveChangesAsync();
+            }
         }
 
         private void AddOwner(string firstname, string lastname, string fixo, string mobile, string address, User user)
         {
             _context.Owners.Add(new Entities.Owners
+            {
+                Document = _random.Next(100000),
+                FirstName = firstname,
+                LastName = lastname,
+                FixedPhone = fixo,
+                CellPhone = mobile,
+                Address = address,
+                User = user
+            });
+        }
+
+
+        private void AddLessee(string firstname, string lastname, string fixo, string mobile, string address, User user)
+        {
+            _context.Lessees.Add(new Entities.Lessee
             {
                 Document = _random.Next(100000),
                 FirstName = firstname,

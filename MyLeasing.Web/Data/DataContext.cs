@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using MyLeasing.Web.Data.Entities;
-using System.Collections.Generic;
+using MyLeasing.Web.Controllers;
 
 namespace MyLeasing.Web.Data
 {
@@ -10,9 +11,14 @@ namespace MyLeasing.Web.Data
 
         public DbSet<Owners> Owners { get; set; }
 
+        public DbSet<Lessee> Lessees { get; set; }
+
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
 
         }
+
+
+        public DbSet<MyLeasing.Web.Data.Entities.Lessee> Lessee { get; set; }
     }
 }
